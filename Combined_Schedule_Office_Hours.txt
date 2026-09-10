@@ -1,0 +1,291 @@
+Combined Class Schedule and Office Hours
+==================================================
+Course ID: CTEC 350
+Title: Prin & Meth of Intru Det & Pre
+Begin: 16:00:00
+End: 18:50:00
+Days: MW
+Room: 108
+Instructor: Adedoyin, Anthony
+------------------------------
+Course ID: CTEC 435
+Title: UNIX System Administration
+Begin: 19:00:00
+End: 21:50:00
+Days: MW
+Room: 108
+Instructor: Ruth Agada
+------------------------------
+Course ID: CTEC 120
+Title: Prin of SecureCoding Using Jav
+Begin: 12:00:00
+End: 03:15:00
+Days: MW
+Room: 116
+Instructor: Dr. Stone, D. B.
+------------------------------
+Course ID: CTEC 300
+Title: Database Achitecture
+Begin: 19:00:00
+End: 21:50:00
+Days: MW
+Room: 112
+Instructor: Agboli, P.
+------------------------------
+Course ID: CTEC 214
+Title: Client Operating Systs
+Begin: 12:00:00
+End: 15:40:00
+Days: TR
+Room: 109
+Instructor: Baptiste, R.
+------------------------------
+Course ID: CTEC 302
+Title: Computer Networking
+Begin: 16:00:00
+End: 18:50:00
+Days: TR
+Room: 111
+Instructor: Baptiste, R.
+------------------------------
+Course ID: CTEC 128
+Title: Discrete Structures - Big Data
+Begin: 16:00:00
+End: 18:50:00
+Days: TR
+Room: Online
+Instructor: Wilson, Marcella J.
+------------------------------
+Course ID: CTEC 298
+Title: Symbolic Computation use BigDa
+Begin: 16:00:00
+End: 18:50:00
+Days: TR
+Room: 108
+Instructor: Bemley, J
+------------------------------
+Course ID: CTEC 671
+Title: Smart Integrated Systems
+Begin: 16:00:00
+End: 18:50:00
+Days: TR
+Room: Online
+Instructor: Bemley, Jesse
+------------------------------
+Course ID: CTEC 711
+Title: IoT Capstone I
+Begin: 17:00:00
+End: 17:00:00
+Days: MWF
+Room: Online
+Instructor: Ruth Agada
+------------------------------
+Course ID: CTEC 720
+Title: Master's Thesis Research I
+Begin: 19:00:00
+End: 21:50:00
+Days: MW
+Room: Online
+Instructor: Bright, Marvin
+------------------------------
+Course ID: CTEC 721
+Title: Master's Thesis Research II
+Begin: 19:00:00
+End: 09:50:00
+Days: TR
+Room: Online
+Instructor: Bright, Marvin
+------------------------------
+Course ID: CTEC 424
+Title: Database Administration
+Begin: 19:00:00
+End: 21:50:00
+Days: TR
+Room: Online
+Instructor: Carter, Adrian D.
+------------------------------
+Course ID: CTEC 445
+Title: Fund of Cryptography & Applica
+Begin: 16:00:00
+End: 18:50:00
+Days: MW
+Room: 109
+Instructor: Staphord Bengesi
+------------------------------
+Course ID: CTEC 450
+Title: Case Studies in Comp Security
+Begin: 19:00:00
+End: 21:50:00
+Days: MW
+Room: 111
+Instructor: Loubna Dali
+------------------------------
+Course ID: CTEC 305
+Title: Server Administration I
+Begin: 16:00:00
+End: 18:50:00
+Days: TR
+Room: 109
+Instructor: Chery, Pierrot
+------------------------------
+Course ID: CTEC 405
+Title: Server Administration II
+Begin: 19:00:00
+End: 21:50:00
+Days: TR
+Room: 109
+Instructor: Chery, Pierrot
+------------------------------
+Course ID: CTEC 226
+Title: Intro To Db Development
+Begin: 19:00:00
+End: 21:50:00
+Days: TR
+Room: 116
+Instructor: Deal, Shawn
+------------------------------
+Course ID: CTEC 294
+Title: PC Architecture
+Begin: 16:00:00
+End: 18:50:00
+Days: MW
+Room: 112
+Instructor: Dixon, Carl
+------------------------------
+Course ID: CTEC 125
+Title: Intro to Python programming
+Begin: On-line Asynchronous Course
+End: nan
+Days: nan
+Room: Online
+Instructor: Dr. Stone, D. B.
+------------------------------
+Course ID: CTEC 324
+Title: Database Appl Dev
+Begin: 16:00:00
+End: 18:50:00
+Days: MW
+Room: online
+Instructor: Dr. Stone, D. B.
+------------------------------
+Course ID: CTEC 111
+Title: Cybersecurity for All
+Begin: 09:00:00
+End: 11:50:00
+Days: TR
+Room: Online
+Instructor: Loubna Dali
+------------------------------
+Course ID: CTEC 114
+Title: Comp Tools & Environ
+Begin: 16:00:00
+End: 18:50:00
+Days: MW
+Room: 116
+Instructor: Victoria Lee
+------------------------------
+Course ID: CTEC 475
+Title: Cloud Computing
+Begin: 19:00:00
+End: 21:50:00
+Days: MW
+Room: 114
+Instructor: Francis, Wilbert R.
+------------------------------
+Course ID: CTEC 393
+Title: Internet Prog II
+Begin: 16:00:00
+End: 18:50:00
+Days: MW
+Room: Online
+Instructor: Lamar, Courtney
+------------------------------
+Course ID: CTEC 426
+Title: Expert Systems Using Big Data
+Begin: 19:00:00
+End: 21:50:00
+Days: MW
+Room: 114
+Instructor: Miller, Stephanie R.
+------------------------------
+Course ID: CTEC 651
+Title: Internet of Things of Digital Res
+Begin: 16:00:00
+End: 18:50:00
+Days: MW
+Room: Online
+Instructor: Njeh, Felix
+------------------------------
+Course ID: CTEC 410
+Title: Internet Technology
+Begin: 16:00:00
+End: 18:50:00
+Days: TR
+Room: 201
+Instructor: Okonofua, Henry
+------------------------------
+Course ID: CTEC 222
+Title: Linux Operating System
+Begin: 19:00:00
+End: 21:50:00
+Days: TR
+Room: 108
+Instructor: Roberts, Curtis
+------------------------------
+Course ID: CTEC 335
+Title: Network Protocols
+Begin: 16:00:00
+End: 18:50:00
+Days: TR
+Room: 116
+Instructor: Roberts, Curtis
+------------------------------
+Course ID: CTEC 345
+Title: Found of Comp and Network Secu
+Begin: 17:00:00
+End: 19:50:00
+Days: MW
+Room: 111
+Instructor: Brett Tolbert
+------------------------------
+Course ID: CTEC 402
+Title: Software and OS Security
+Begin: 19:00:00
+End: 21:50:00
+Days: MW
+Room: Online
+Instructor: Ruth Agada
+------------------------------
+Course ID: CTEC 220
+Title: Adv Secure Coding Using Java
+Begin: 11:00:00
+End: 13:50:00
+Days: MW
+Room: 114
+Instructor: Vega, J.
+------------------------------
+Course ID: CTEC 230
+Title: Application of Data Structures
+Begin: 11:00:00
+End: 14:40:00
+Days: TR
+Room: 114
+Instructor: Wilson, Marcella J.
+------------------------------
+Course ID: CTEC 293
+Title: Edge Technology
+Begin: 16:00:00
+End: 18:50:00
+Days: MW
+Room: 114
+Instructor: Wilson, Marcella J.
+------------------------------
+Course ID: CTEC 415
+Title: Edge Computing
+Begin: 10:00:00
+End: 12:50:00
+Days: TR
+Room: 114
+Instructor: Wilson, Marcella J.
+------------------------------
+Office Hours: Office Hours:	Tue/Thursday: 10:45-1pm
