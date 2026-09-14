@@ -6,6 +6,8 @@ TARGET = schedule_formatter.exe
 LIBRARY = libformatter.a
 OBJECT = formatter.o
 
+.PHONY: all final run clean update_schedule
+
 all: final
 
 $(OBJECT): formatter.c formatter.h
@@ -17,7 +19,10 @@ $(LIBRARY): $(OBJECT)
 $(TARGET): main.c formatter.h $(LIBRARY)
 	$(CC) $(CFLAGS) main.c $(LIBRARY) -o $(TARGET)
 
-formatted_schedule.txt: $(TARGET) Combined_Schedule_Office_Hours.txt
+update_schedule:
+	python main.py
+
+formatted_schedule.txt: $(TARGET) update_schedule
 	./$(TARGET)
 
 Final_Schedule.docx: formatted_schedule.txt generate_word.py
@@ -29,4 +34,4 @@ final: Final_Schedule.docx
 run: final
 
 clean:
-	rm -f $(OBJECT) $(LIBRARY) $(TARGET) formatted_schedule.txt Final_Schedule.docx
+	rm -f $(OBJECT) $(LIBRARY) $(TARGET) Combined_Schedule_Office_Hours.txt formatted_schedule.txt Final_Schedule.docx

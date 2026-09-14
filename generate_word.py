@@ -5,12 +5,12 @@ from docx.enum.section import WD_ORIENT
 from docx.shared import Inches, Pt
 from datetime import datetime
 
-INPUT_FILE = "formatted_schedule.txt"
+INPUT_FILE = "Combined_Schedule_Office_Hours.txt"
 OUTPUT_FILE = "Final_Schedule.docx"
 
 # Change this to a professor's name to show only their classes. Works with partial names.
 # Use "ALL" to show every class.
-TEACHER_NAME = "Tankeh, Ap"
+TEACHER_NAME = "tankeh"
 
 def format_time(value):
     value = value.strip()
@@ -55,11 +55,23 @@ def format_days(days):
     return days
 
 
+def get_last_name(name):
+    name = name.strip().lower()
+
+    if name.startswith("dr. "):
+        name = name[4:]
+
+    if "," in name:
+        return name.split(",", 1)[0].strip()
+
+    return name.split()[-1]
+
 def read_schedule():
     courses = []
-    office_hours = ""
+    office_hours = {}
 
     current_course = None
+    current_office_instructor = None
     reading_office_hours = False
 
     with open(INPUT_FILE, "r", encoding="utf-8") as file:
@@ -78,10 +90,17 @@ def read_schedule():
                 continue
 
             if reading_office_hours:
-                if line.startswith("Office Hours:"):
-                    office_hours = line.replace(
+                if line.startswith("Instructor:"):
+                    current_office_instructor = line.replace(
+                        "Instructor:", "", 1
+                    ).strip()
+
+                elif line.startswith("Office Hours:") and current_office_instructor:
+                    hours = line.replace(
                         "Office Hours:", "", 1
                     ).strip()
+
+                    office_hours[current_office_instructor] = hours
 
                 continue
 
@@ -258,24 +277,28 @@ def create_document(courses, instructor_name, office_hours):
 
     if instructor_name == "All Instructors":
         if office_hours:
-            office_text = (
-                "Dr. Appolo Tankeh — "
-                "Tuesday & Thursday: 10:45 AM – 1:00 PM"
+            office_text = "\n".join(
+                f"{instructor} — {hours}"
+                for instructor, hours in office_hours.items()
             )
         else:
             office_text = "No office hours were provided."
 
-    elif "tankeh" in instructor_name.lower() and office_hours:
-        office_text = (
-            "Dr. Appolo Tankeh — "
-            "Tuesday & Thursday: 10:45 AM – 1:00 PM"
-        )
-
     else:
-        office_text = (
-            "Office hours were not provided for this instructor "
-            "in the supplied files."
-        )
+        office_text = None
+
+        selected_last_name = get_last_name(instructor_name)
+
+        for instructor, hours in office_hours.items():
+            if get_last_name(instructor) == selected_last_name:
+                office_text = f"{instructor} — {hours}"
+                break
+
+        if office_text is None:
+            office_text = (
+                "Office hours were not provided for this instructor "
+                "in the supplied files."
+            )
 
     run = paragraph.add_run(office_text)
     run.bold = True

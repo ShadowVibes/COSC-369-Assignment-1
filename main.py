@@ -41,21 +41,42 @@ for course_id, course_info in courses.items():
 
 
 
-#Part 2: read the syllabus file and extract the office hours information --------------------
+#Part 2: read the syllabus files and extract the office hours information --------------------
 from docx import Document
 
-doc = Document("Syllabus.docx")
-office_hours = None
+syllabus_files = [
+    "Syllabus.docx",
+    "Syllabus2.docx",
+]
 
-for paragraph in doc.paragraphs:
-    text = paragraph.text.strip()
+instructor_office_hours = {}
 
-    if "Office Hours:" in text:
-        office_hours = text
-        break
+for syllabus_file in syllabus_files:
+    doc = Document(syllabus_file)
 
-print(office_hours)
+    office_hours = None
+    instructor = None
 
+    for paragraph in doc.paragraphs:
+        text = paragraph.text.strip()
+
+        if "Office Hours:" in text:
+            office_hours = text.replace("Office Hours:", "", 1).strip()
+
+        if "Instructor:" in text:
+            instructor = text.replace("Instructor:", "", 1).strip()
+
+        if office_hours is not None and instructor is not None:
+            break
+
+    if instructor is not None:
+        instructor_office_hours[instructor] = office_hours
+
+
+for instructor, office_hours in instructor_office_hours.items():
+    print(instructor)
+    print(office_hours)
+    print()
 
 
 #Part 3: create a new file that contains the combined class schedule and office hours --------------------
@@ -74,9 +95,20 @@ with open("Combined_Schedule_Office_Hours.txt", "w") as f:
         f.write(f"Instructor: {course_info[5]}\n")
         f.write("-" * 30 + "\n")
 
-    # Write office hours
-    if office_hours:
-        f.write(f"Office Hours: {office_hours}\n")
+    #Write office hours
+    f.write("\n")
+    f.write("OFFICE HOURS\n")
+    f.write("=" * 50 + "\n")
+
+    for instructor, office_hours in instructor_office_hours.items():
+        f.write(f"Instructor: {instructor}\n")
+
+        if office_hours:
+            f.write(f"Office Hours: {office_hours}\n")
+        else:
+            f.write("Office Hours: Not provided\n")
+
+        f.write("-" * 30 + "\n")
 
 
 #Part 4: to do in C: take this text file and create a new Word document that contains the 

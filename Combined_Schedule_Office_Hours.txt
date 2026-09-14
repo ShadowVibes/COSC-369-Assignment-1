@@ -6,7 +6,7 @@ Begin: 16:00:00
 End: 18:50:00
 Days: MW
 Room: 108
-Instructor: Tankeh, Apollo
+Instructor: Adedoyin, Anthony
 ------------------------------
 Course ID: CTEC 435
 Title: UNIX System Administration
@@ -288,4 +288,20 @@ Days: TR
 Room: 114
 Instructor: Wilson, Marcella J.
 ------------------------------
-Office Hours: Office Hours:	Tue/Thursday: 10:45-1pm
+Course ID: CTEC 369
+Title: Software Engineering
+Begin: 09:30:00
+End: 10:45:00
+Days: TR
+Room: 108
+Instructor: Appolo Tankeh
+------------------------------
+
+OFFICE HOURS
+==================================================
+Instructor: Dr. Appolo Tankeh
+Office Hours: Tue/Thursday: 10:45-1pm
+------------------------------
+Instructor: Dr. Ruth Agada
+Office Hours: Mon/Wednesday: 11:45-2pm
+------------------------------
