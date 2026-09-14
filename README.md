@@ -2,7 +2,7 @@
 
 ## Project Description
 
-This project takes two input files and uses them to create a class schedule and office hours document.
+This project takes 2+ input files and uses them to create a class schedule and office hours document.
 
 We used Python, C, a static library, and a Makefile for the project.
 
@@ -10,15 +10,15 @@ The Python part reads the input files and puts the information into a temporary 
 
 ## Input Files
 
-The two input files are:
+The input files are:
 
 1. `Enrollment info.xlsx`
 
-   - This file has the class information like the course number, title, days, times, room, and instructor.
+   - This file has the class information for all relevant courses like the course number, title, days, times, room, and instructor.
 
-2. `Syllabus.docx`
+2. `Syllabus.docx` (and optionally additional syllabi)
 
-   - This file has the professor information and office hours.
+   - This file has the professor(s) information and office hours.
 
 ## Project Files
 
@@ -37,4 +37,7 @@ Open the project folder in VS Code and open the terminal.
 To build and run the project, type:
 
 ```bash
-make
+make run
+```
+
+Ensure all required input files are in the project folder. To create a document for a different teacher, go to generate_word.py and assign any part of the teacher's name to the "TEACHER_NAME" variable
