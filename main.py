@@ -4,9 +4,12 @@ take the two input files (enrollment info and the professor's syllabus) and crea
 file that contains the combined class schedule and office hours (sample output in the 
 instruction file)
 """
-#make output more readable by adding some new lines
-msg = "\n\n\n\n"
-print(msg)
+debug = False
+
+if debug:
+    #make output more readable by adding some new lines
+    msg = "\n\n\n\n"
+    print(msg)
 
 
 
@@ -33,11 +36,12 @@ for _, row in df.iterrows():
 
     courses[course_id] = course_info
 
+
 #print courses (debugging)
-for course_id, course_info in courses.items():
-    print(course_id, course_info)
-    print()
-#print(courses) #full sctructure (debugging)
+if debug:
+    for course_id, course_info in courses.items():
+        print(course_id, course_info)
+        print()
 
 
 
@@ -73,10 +77,11 @@ for syllabus_file in syllabus_files:
         instructor_office_hours[instructor] = office_hours
 
 
-for instructor, office_hours in instructor_office_hours.items():
-    print(instructor)
-    print(office_hours)
-    print()
+if debug:
+    for instructor, office_hours in instructor_office_hours.items():
+        print(instructor)
+        print(office_hours)
+        print()
 
 
 #Part 3: create a new file that contains the combined class schedule and office hours --------------------
@@ -119,5 +124,5 @@ with open("Combined_Schedule_Office_Hours.txt", "w") as f:
 
 
 
-
-print(msg)
+if debug:
+    print(msg)
