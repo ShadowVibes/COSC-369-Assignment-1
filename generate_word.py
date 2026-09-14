@@ -8,10 +8,9 @@ from datetime import datetime
 INPUT_FILE = "formatted_schedule.txt"
 OUTPUT_FILE = "Final_Schedule.docx"
 
-# Change this to a professor's name to show only their classes.
+# Change this to a professor's name to show only their classes. Works with partial names.
 # Use "ALL" to show every class.
-TEACHER_NAME = "ALL"
-
+TEACHER_NAME = "Tankeh, Ap"
 
 def format_time(value):
     value = value.strip()
