@@ -40,4 +40,4 @@ To build and run the project, type:
 make run
 ```
 
-Ensure all required input files are in the project folder. To create a document for a different teacher, go to generate_word.py and assign any part of the teacher's name to the "TEACHER_NAME" variable
+Ensure all required input files are in the project folder. To create a document for a different teacher, go to generate_word.py and assign any part of the teacher's name to the "TEACHER_NAME" variable.
