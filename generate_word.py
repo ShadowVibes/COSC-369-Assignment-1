@@ -8,6 +8,10 @@ from datetime import datetime
 INPUT_FILE = "formatted_schedule.txt"
 OUTPUT_FILE = "Final_Schedule.docx"
 
+# Change this to a professor's name to show only their classes.
+# Use "ALL" to show every class.
+TEACHER_NAME = "ALL"
+
 
 def format_time(value):
     value = value.strip()
@@ -92,7 +96,8 @@ def read_schedule():
                     "begin": "",
                     "end": "",
                     "days": "",
-                    "room": ""
+                    "room": "",
+                    "instructor": ""
                 }
 
             elif current_course:
@@ -121,16 +126,20 @@ def read_schedule():
                         line.replace("Room:", "").strip()
                     )
 
+                elif line.startswith("Instructor:"):
+                    current_course["instructor"] = (
+                        line.replace("Instructor:", "").strip()
+                    )
+
     if current_course:
         courses.append(current_course)
 
     return courses, office_hours
 
 
-def create_document(courses, office_hours):
+def create_document(courses, instructor_name, office_hours):
     document = Document()
 
-    # Landscape page so the full table fits
     section = document.sections[0]
     section.orientation = WD_ORIENT.LANDSCAPE
     section.page_width = Inches(11)
@@ -141,14 +150,20 @@ def create_document(courses, office_hours):
     section.left_margin = Inches(0.4)
     section.right_margin = Inches(0.4)
 
-    # CLASS SCHEDULE heading
     heading = document.add_paragraph()
 
     heading_run = heading.add_run("CLASS SCHEDULE")
     heading_run.bold = True
     heading_run.font.size = Pt(16)
 
-    # Schedule table
+    instructor_paragraph = document.add_paragraph()
+
+    instructor_run = instructor_paragraph.add_run(
+        f"Instructor: {instructor_name}"
+    )
+    instructor_run.bold = True
+    instructor_run.font.size = Pt(12)
+
     table = document.add_table(rows=1, cols=3)
     table.style = "Table Grid"
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -170,7 +185,6 @@ def create_document(courses, office_hours):
         run.bold = True
         run.font.size = Pt(12)
 
-    # Add each course
     for course in courses:
         row = table.add_row().cells
 
@@ -181,7 +195,6 @@ def create_document(courses, office_hours):
         for cell in row:
             cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.TOP
 
-        # Course number and title
         course_paragraph = row[0].paragraphs[0]
         course_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
@@ -195,7 +208,6 @@ def create_document(courses, office_hours):
         title_run.bold = True
         title_run.font.size = Pt(9)
 
-        # Days and time
         begin = format_time(course["begin"])
         end = format_time(course["end"])
         days = format_days(course["days"])
@@ -215,7 +227,6 @@ def create_document(courses, office_hours):
         time_run.bold = True
         time_run.font.size = Pt(10)
 
-        # Location
         location_paragraph = row[2].paragraphs[0]
         location_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
@@ -223,7 +234,6 @@ def create_document(courses, office_hours):
         location_run.bold = True
         location_run.font.size = Pt(10)
 
-    # OFFICE HOURS
     document.add_paragraph()
 
     office_heading = document.add_paragraph()
@@ -239,7 +249,6 @@ def create_document(courses, office_hours):
     )
     note_run.bold = True
 
-    # Office hours box
     office_table = document.add_table(rows=1, cols=1)
     office_table.style = "Table Grid"
 
@@ -248,15 +257,28 @@ def create_document(courses, office_hours):
     paragraph = cell.paragraphs[0]
     paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
-    if office_hours:
-        run = paragraph.add_run(
-            "Dr. Appolo Tankeh — Tuesday & Thursday: 10:45 AM – 1:00 PM"
-        )
-    else:
-        run = paragraph.add_run(
-            "Dr. Appolo Tankeh — No office hours provided."
+    if instructor_name == "All Instructors":
+        if office_hours:
+            office_text = (
+                "Dr. Appolo Tankeh — "
+                "Tuesday & Thursday: 10:45 AM – 1:00 PM"
+            )
+        else:
+            office_text = "No office hours were provided."
+
+    elif "tankeh" in instructor_name.lower() and office_hours:
+        office_text = (
+            "Dr. Appolo Tankeh — "
+            "Tuesday & Thursday: 10:45 AM – 1:00 PM"
         )
 
+    else:
+        office_text = (
+            "Office hours were not provided for this instructor "
+            "in the supplied files."
+        )
+
+    run = paragraph.add_run(office_text)
     run.bold = True
     run.font.size = Pt(14)
 
@@ -266,4 +288,29 @@ def create_document(courses, office_hours):
 
 
 courses, office_hours = read_schedule()
-create_document(courses, office_hours)
+
+if TEACHER_NAME.upper() == "ALL":
+    filtered_courses = courses
+    instructor_name = "All Instructors"
+
+else:
+    filtered_courses = [
+        course for course in courses
+        if TEACHER_NAME.lower() in course["instructor"].lower()
+    ]
+
+    if filtered_courses:
+        instructor_name = filtered_courses[0]["instructor"]
+
+
+if not filtered_courses:
+    print(f"No classes found for instructor: {TEACHER_NAME}")
+
+else:
+    print(f"Found {len(filtered_courses)} class(es).")
+
+    create_document(
+        filtered_courses,
+        instructor_name,
+        office_hours
+    )
