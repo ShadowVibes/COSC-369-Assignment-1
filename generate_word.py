@@ -1,32 +1,126 @@
+
+from pathlib import Path
+from datetime import datetime
+from collections import defaultdict
 from docx import Document
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
 from docx.enum.section import WD_ORIENT
 from docx.shared import Inches, Pt
-from datetime import datetime
+import re
 
-INPUT_FILE = "Combined_Schedule_Office_Hours.txt"
-OUTPUT_FILE = "Final_Schedule.docx"
+# Project files
+FOLDER = Path(__file__).resolve().parent
+INPUT_FILE = FOLDER / "formatted_schedule.txt"
+KNOWLEDGE_BASE = FOLDER / "knowledge_base.pl"
+OUTPUT_FILE = FOLDER / "Final_Schedule.docx"
 
-# Change this to a professor's name to show only their classes. Works with partial names.
-# Use "ALL" to show every class.
-TEACHER_NAME = "tankeh"
+# Use "ALL" or enter a professor's name.
+TEACHER_NAME = "ALL"
+
+
+def prolog_facts(predicate, count):
+    """Read facts from the Prolog knowledge base."""
+    facts = []
+
+    if not KNOWLEDGE_BASE.exists():
+        return facts
+
+    pattern = re.compile(
+        rf"^{re.escape(predicate)}\((.*)\)\.$"
+    )
+    atom_pattern = re.compile(r"'((?:''|[^'])*)'")
+
+    for line in KNOWLEDGE_BASE.read_text(
+        encoding="utf-8"
+    ).splitlines():
+        match = pattern.match(line.strip())
+
+        if match:
+            values = [
+                item.replace("''", "'")
+                for item in atom_pattern.findall(match.group(1))
+            ]
+
+            if len(values) == count:
+                facts.append(values)
+
+    return facts
+
 
 def format_time(value):
-    value = value.strip()
+    """Convert 24-hour time into 12-hour time."""
+    value = str(value).strip()
 
-    if value == "N/A" or "Asynchronous" in value:
-        return value
+    for pattern in ("%H:%M:%S", "%H:%M"):
+        try:
+            return datetime.strptime(
+                value, pattern
+            ).strftime("%I:%M %p").lstrip("0")
+        except ValueError:
+            continue
 
-    try:
-        time_value = datetime.strptime(value, "%H:%M:%S")
-        return time_value.strftime("%I:%M %p").lstrip("0")
-    except ValueError:
-        return value
+    return value
 
 
-def format_days(days):
-    day_names = {
+def format_office_hours(value):
+    """Format faculty and syllabus office hours."""
+    value = value.replace("Office Hours:", "").strip()
+
+    # Remove day labels already stored in syllabus text.
+    value = re.sub(
+        r"^(Tue/Thursday|Tuesday/Thursday)\s*:\s*",
+        "",
+        value,
+        flags=re.I
+    )
+
+    # Handle 24-hour times, such as 13:00-14:30.
+    match = re.fullmatch(
+        r"(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})",
+        value
+    )
+
+    if match:
+        start, end = match.groups()
+        return f"{format_time(start)} – {format_time(end)}"
+
+    # Handle times such as 10:45-1pm.
+    match = re.fullmatch(
+        r"(\d{1,2}(?::\d{2})?)\s*-\s*"
+        r"(\d{1,2}(?::\d{2})?)\s*([ap]m)",
+        value,
+        flags=re.I
+    )
+
+    if match:
+        start, end, end_period = match.groups()
+        end_period = end_period.upper()
+
+        start_hour = int(start.split(":")[0])
+        end_hour = int(end.split(":")[0])
+
+        # Infer AM for a morning-to-afternoon range.
+        if end_period == "PM" and start_hour > end_hour:
+            start_period = "AM"
+        else:
+            start_period = end_period
+
+        if ":" not in start:
+            start += ":00"
+
+        if ":" not in end:
+            end += ":00"
+
+        return (
+            f"{start} {start_period} – "
+            f"{end} {end_period}"
+        )
+
+    return value
+
+
+def format_days(value):
+    """Convert abbreviated days into full names."""
+    names = {
         "M": "Monday",
         "T": "Tuesday",
         "W": "Wednesday",
@@ -34,305 +128,246 @@ def format_days(days):
         "F": "Friday"
     }
 
-    if days == "N/A":
+    value = value.strip().upper()
+
+    if value in ("N/A", "UNKNOWN", ""):
         return "Online Asynchronous"
 
-    names = []
+    days = [names[letter] for letter in value if letter in names]
 
-    for letter in days:
-        if letter in day_names:
-            names.append(day_names[letter])
+    if not days:
+        return value
 
-    if len(names) == 1:
-        return names[0]
+    if len(days) == 1:
+        return days[0]
 
-    if len(names) == 2:
-        return f"{names[0]} & {names[1]}"
-
-    if len(names) > 2:
-        return ", ".join(names[:-1]) + f" & {names[-1]}"
-
-    return days
+    return ", ".join(days[:-1]) + " & " + days[-1]
 
 
-def get_last_name(name):
-    name = name.strip().lower()
-
-    if name.startswith("dr. "):
-        name = name[4:]
-
-    if "," in name:
-        return name.split(",", 1)[0].strip()
-
-    return name.split()[-1]
-
-def read_schedule():
-    courses = []
-    office_hours = {}
-
-    current_course = None
-    current_office_instructor = None
-    reading_office_hours = False
-
-    with open(INPUT_FILE, "r", encoding="utf-8") as file:
-        for raw_line in file:
-            line = raw_line.strip()
-
-            if not line:
-                continue
-
-            if line == "OFFICE HOURS":
-                if current_course:
-                    courses.append(current_course)
-                    current_course = None
-
-                reading_office_hours = True
-                continue
-
-            if reading_office_hours:
-                if line.startswith("Instructor:"):
-                    current_office_instructor = line.replace(
-                        "Instructor:", "", 1
-                    ).strip()
-
-                elif line.startswith("Office Hours:") and current_office_instructor:
-                    hours = line.replace(
-                        "Office Hours:", "", 1
-                    ).strip()
-
-                    office_hours[current_office_instructor] = hours
-
-                continue
-
-            if line.startswith("Course ID:"):
-                if current_course:
-                    courses.append(current_course)
-
-                current_course = {
-                    "course": line.replace("Course ID:", "").strip(),
-                    "title": "",
-                    "begin": "",
-                    "end": "",
-                    "days": "",
-                    "room": "",
-                    "instructor": ""
-                }
-
-            elif current_course:
-                if line.startswith("Title:"):
-                    current_course["title"] = (
-                        line.replace("Title:", "").strip()
-                    )
-
-                elif line.startswith("Begin:"):
-                    current_course["begin"] = (
-                        line.replace("Begin:", "").strip()
-                    )
-
-                elif line.startswith("End:"):
-                    current_course["end"] = (
-                        line.replace("End:", "").strip()
-                    )
-
-                elif line.startswith("Days:"):
-                    current_course["days"] = (
-                        line.replace("Days:", "").strip()
-                    )
-
-                elif line.startswith("Room:"):
-                    current_course["room"] = (
-                        line.replace("Room:", "").strip()
-                    )
-
-                elif line.startswith("Instructor:"):
-                    current_course["instructor"] = (
-                        line.replace("Instructor:", "").strip()
-                    )
-
-    if current_course:
-        courses.append(current_course)
-
-    return courses, office_hours
-
-
-def create_document(courses, instructor_name, office_hours):
-    document = Document()
-
-    section = document.sections[0]
-    section.orientation = WD_ORIENT.LANDSCAPE
-    section.page_width = Inches(11)
-    section.page_height = Inches(8.5)
-
-    section.top_margin = Inches(0.5)
-    section.bottom_margin = Inches(0.5)
-    section.left_margin = Inches(0.4)
-    section.right_margin = Inches(0.4)
-
-    heading = document.add_paragraph()
-
-    heading_run = heading.add_run("CLASS SCHEDULE")
-    heading_run.bold = True
-    heading_run.font.size = Pt(16)
-
-    instructor_paragraph = document.add_paragraph()
-
-    instructor_run = instructor_paragraph.add_run(
-        f"Instructor: {instructor_name}"
+def normalize_name(name):
+    """Standardize professor names for matching."""
+    name = re.sub(
+        r"\b(dr|professor|prof)\.?\s*",
+        "",
+        name,
+        flags=re.I
     )
-    instructor_run.bold = True
-    instructor_run.font.size = Pt(12)
 
-    table = document.add_table(rows=1, cols=3)
+    return set(re.findall(r"[a-z]+", name.lower()))
+
+
+def read_courses():
+    """Read the formatted class schedule."""
+    courses = []
+    current = None
+
+    if not INPUT_FILE.exists():
+        print("Missing formatted_schedule.txt.")
+        return courses
+
+    fields = {
+        "Course ID": "course",
+        "Title": "title",
+        "Begin": "begin",
+        "End": "end",
+        "Days": "days",
+        "Room": "room",
+        "Instructor": "instructor"
+    }
+
+    for raw in INPUT_FILE.read_text(
+        encoding="utf-8"
+    ).splitlines():
+        line = raw.strip()
+
+        if line == "OFFICE HOURS":
+            break
+
+        if line.startswith("Course ID:"):
+            if current:
+                courses.append(current)
+
+            current = {
+                field: "" for field in fields.values()
+            }
+
+        if current and ":" in line:
+            label, value = line.split(":", 1)
+
+            if label in fields:
+                current[fields[label]] = value.strip()
+
+    if current:
+        courses.append(current)
+
+    return courses
+
+
+def load_office_hours():
+    """Load office hours for all professors."""
+    hours = defaultdict(list)
+
+    for professor, day, time in prolog_facts("office_hours", 3):
+        entry = (day.title(), format_office_hours(time))
+
+        if entry not in hours[professor]:
+            hours[professor].append(entry)
+
+    return hours
+
+
+def add_schedule_table(document, courses):
+    """Create the teaching schedule table."""
+    table = document.add_table(rows=1, cols=4)
     table.style = "Table Grid"
-    table.alignment = WD_TABLE_ALIGNMENT.CENTER
-    table.autofit = False
 
-    header_cells = table.rows[0].cells
+    headers = [
+        "Course",
+        "Instructor",
+        "Schedule",
+        "Location"
+    ]
 
-    header_cells[0].width = Inches(2.6)
-    header_cells[1].width = Inches(6.0)
-    header_cells[2].width = Inches(1.2)
+    for cell, heading in zip(table.rows[0].cells, headers):
+        cell.text = heading
 
-    headers = ["Course", "Times", "Location"]
-
-    for index, title in enumerate(headers):
-        paragraph = header_cells[index].paragraphs[0]
-        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-
-        run = paragraph.add_run(title)
-        run.bold = True
-        run.font.size = Pt(12)
+        for run in cell.paragraphs[0].runs:
+            run.bold = True
 
     for course in courses:
         row = table.add_row().cells
-
-        row[0].width = Inches(2.6)
-        row[1].width = Inches(6.0)
-        row[2].width = Inches(1.2)
-
-        for cell in row:
-            cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.TOP
-
-        course_paragraph = row[0].paragraphs[0]
-        course_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-
-        course_run = course_paragraph.add_run(course["course"])
-        course_run.bold = True
-        course_run.font.size = Pt(10)
-
-        title_run = course_paragraph.add_run(
-            f"\n({course['title']})"
-        )
-        title_run.bold = True
-        title_run.font.size = Pt(9)
 
         begin = format_time(course["begin"])
         end = format_time(course["end"])
         days = format_days(course["days"])
 
-        if "Asynchronous" in begin or days == "Online Asynchronous":
-            time_text = "Online Asynchronous Course"
+        if "asynchronous" in begin.lower():
+            schedule = "Online Asynchronous"
 
-        elif end == "N/A":
-            time_text = f"{days} {begin}"
+        elif not end or end.lower() in ("n/a", "unknown"):
+            schedule = f"{days}, {begin}"
 
         else:
-            time_text = f"{days} {begin} to {end}"
+            schedule = f"{days}, {begin} – {end}"
 
-        time_paragraph = row[1].paragraphs[0]
+        row[0].text = (
+            f"{course['course']}\n{course['title']}"
+        )
+        row[1].text = course["instructor"] or "Not provided"
+        row[2].text = schedule
+        row[3].text = course["room"] or "Not provided"
 
-        time_run = time_paragraph.add_run(time_text)
-        time_run.bold = True
-        time_run.font.size = Pt(10)
 
-        location_paragraph = row[2].paragraphs[0]
-        location_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+def add_office_hours(document, hours, selected):
+    """Create the office-hours table."""
+    document.add_heading("OFFICE HOURS", level=1)
 
-        location_run = location_paragraph.add_run(course["room"])
-        location_run.bold = True
-        location_run.font.size = Pt(10)
-
-    document.add_paragraph()
-
-    office_heading = document.add_paragraph()
-
-    office_heading_run = office_heading.add_run("OFFICE HOURS")
-    office_heading_run.bold = True
-    office_heading_run.font.size = Pt(16)
-
-    note = document.add_paragraph()
-
-    note_run = note.add_run(
-        "NOTE: Instructors are not to be interrupted during class times."
+    document.add_paragraph(
+        "NOTE: Instructors are not to be interrupted "
+        "during class times."
     )
-    note_run.bold = True
 
-    office_table = document.add_table(rows=1, cols=1)
-    office_table.style = "Table Grid"
+    table = document.add_table(rows=1, cols=2)
+    table.style = "Table Grid"
 
-    cell = office_table.cell(0, 0)
+    table.rows[0].cells[0].text = "Professor"
+    table.rows[0].cells[1].text = "Office Hours"
 
-    paragraph = cell.paragraphs[0]
-    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    for cell in table.rows[0].cells:
+        for run in cell.paragraphs[0].runs:
+            run.bold = True
 
-    if instructor_name == "All Instructors":
-        if office_hours:
-            office_text = "\n".join(
-                f"{instructor} — {hours}"
-                for instructor, hours in office_hours.items()
+    found = False
+
+    for professor in sorted(hours):
+        if selected.upper() != "ALL":
+            if not normalize_name(selected).issubset(
+                normalize_name(professor)
+            ):
+                continue
+
+        found = True
+
+        schedule = "; ".join(
+            f"{day}: {time}"
+            for day, time in hours[professor]
+        )
+
+        cells = table.add_row().cells
+        cells[0].text = professor
+        cells[1].text = schedule
+
+    if not found:
+        cells = table.add_row().cells
+        cells[0].text = selected if selected.upper() != "ALL" else "All faculty"
+        cells[1].text = "Office hours not provided"
+
+
+def create_document():
+    """Generate the Word document."""
+    courses = read_courses()
+    hours = load_office_hours()
+
+    if not courses and not hours:
+        print("No schedule or office-hour information found.")
+        return
+
+    selected = TEACHER_NAME.strip()
+
+    if selected.upper() != "ALL":
+        courses = [
+            course for course in courses
+            if normalize_name(selected).issubset(
+                normalize_name(course["instructor"])
             )
-        else:
-            office_text = "No office hours were provided."
+        ]
 
+    document = Document()
+    section = document.sections[0]
+
+    section.orientation = WD_ORIENT.LANDSCAPE
+    section.page_width = Inches(11)
+    section.page_height = Inches(8.5)
+
+    section.top_margin = Inches(0.6)
+    section.bottom_margin = Inches(0.6)
+    section.left_margin = Inches(0.5)
+    section.right_margin = Inches(0.5)
+
+    normal = document.styles["Normal"]
+    normal.font.name = "Calibri"
+    normal.font.size = Pt(10)
+
+    document.add_heading("FACULTY CLASS SCHEDULE", 0)
+
+    document.add_paragraph(
+        "Instructor: " + (
+            "All Instructors"
+            if selected.upper() == "ALL"
+            else selected
+        )
+    )
+
+    document.add_heading("TEACHING SCHEDULE", level=1)
+
+    if courses:
+        add_schedule_table(document, courses)
     else:
-        office_text = None
+        document.add_paragraph("No matching classes found.")
 
-        selected_last_name = get_last_name(instructor_name)
+    add_office_hours(document, hours, selected)
 
-        for instructor, hours in office_hours.items():
-            if get_last_name(instructor) == selected_last_name:
-                office_text = f"{instructor} — {hours}"
-                break
+    try:
+        document.save(OUTPUT_FILE)
+        print(f"Created: {OUTPUT_FILE.name}")
+        print(f"Courses included: {len(courses)}")
+        print(f"Faculty with office hours: {len(hours)}")
 
-        if office_text is None:
-            office_text = (
-                "Office hours were not provided for this instructor "
-                "in the supplied files."
-            )
-
-    run = paragraph.add_run(office_text)
-    run.bold = True
-    run.font.size = Pt(14)
-
-    document.save(OUTPUT_FILE)
-
-    print(f"Created {OUTPUT_FILE}")
+    except PermissionError:
+        print(
+            "Close the Word document and run the program again."
+        )
 
 
-courses, office_hours = read_schedule()
-
-if TEACHER_NAME.upper() == "ALL":
-    filtered_courses = courses
-    instructor_name = "All Instructors"
-
-else:
-    filtered_courses = [
-        course for course in courses
-        if TEACHER_NAME.lower() in course["instructor"].lower()
-    ]
-
-    if filtered_courses:
-        instructor_name = filtered_courses[0]["instructor"]
-
-
-if not filtered_courses:
-    print(f"No classes found for instructor: {TEACHER_NAME}")
-
-else:
-    print(f"Found {len(filtered_courses)} class(es).")
-
-    create_document(
-        filtered_courses,
-        instructor_name,
-        office_hours
-    )
+if __name__ == "__main__":
+    create_document()
