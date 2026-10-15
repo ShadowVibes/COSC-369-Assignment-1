@@ -1,5 +1,4 @@
 
-import csv
 import re
 from datetime import datetime
 from pathlib import Path
@@ -67,8 +66,8 @@ def weekdays(value):
     if found:
         return found
 
-    # Compact codes such as MW, TR, and MWF.
     code = text.upper().strip()
+
     if re.fullmatch(r"[MTWRF]+", code):
         return list(dict.fromkeys(DAY_NAMES[letter] for letter in code))
 
@@ -93,8 +92,12 @@ def syllabus_time(value):
 # --------------------------------------------------
 
 def read_enrollment():
-    """Read all class sections from the Excel spreadsheet."""
-    df = pd.read_excel(FOLDER / "Enrollment info.xlsx")
+    """Read class sections from the first Excel sheet."""
+    df = pd.read_excel(
+        FOLDER / "Enrollment info.xlsx",
+        sheet_name=0
+    )
+
     sections = []
 
     for _, row in df.iterrows():
@@ -136,17 +139,18 @@ def read_syllabus():
         if match else "Unknown"
     )
 
-    # Correct the confirmed course-number typo.
     if course_id == "COSC 365":
         course_id = "COSC 369"
 
     title = match.group(2).strip() if match else "Unknown"
+
     title = re.split(
         r"\b(?:Fall|Spring|Summer)\s+Semester\b",
         title, maxsplit=1, flags=re.I
     )[0].strip()
 
     class_hours = field("Class Hours")
+
     times = re.findall(
         r"\d{1,2}(?::\d{2})?\s*[AP]M",
         class_hours, re.I
@@ -174,7 +178,7 @@ def read_syllabus():
         "begin": begin,
         "end": end,
         "days": "".join(day_codes[day] for day in days) if days else "Unknown",
-        "room": details["office"],  # Confirmed classroom: CS 108
+        "room": details["office"],
         "instructor": details["professor"]
     }
 
@@ -182,21 +186,33 @@ def read_syllabus():
 
 
 def read_faculty():
-    """Read faculty profiles from CSV."""
-    with open(
-        FOLDER / "faculty_info.csv",
-        encoding="utf-8-sig",
-        newline=""
-    ) as file:
-        return list(csv.DictReader(file))
+    """Read faculty profiles from the Faculty_Info Excel sheet."""
+    df = pd.read_excel(
+        FOLDER / "Enrollment info.xlsx",
+        sheet_name="Faculty_Info",
+        dtype=str
+    ).fillna("")
+
+    # Match Excel column names to the names used by the program.
+    df.columns = df.columns.str.strip()
+
+    df = df.rename(columns={
+        "Email (generated, unverified)": "Email",
+        "Office Days (sample)": "Office Days",
+        "Office Hours (sample)": "Office Hours",
+        "Office Location (sample)": "Office",
+        "Appointment Policy (sample)": "Appointment"
+    })
+
+    return df.to_dict(orient="records")
 
 
 # --------------------------------------------------
 # Generate combined schedule for C
 # --------------------------------------------------
 
-def write_combined(sections, office_hours):
-    """Create the input text file for the C formatter."""
+def write_combined(sections, office_hours, faculty):
+    """Create the class schedule and faculty office hours for C."""
     courses = {section["course_id"]: section for section in sections}
     path = FOLDER / "Combined_Schedule_Office_Hours.txt"
 
@@ -214,13 +230,46 @@ def write_combined(sections, office_hours):
         file.write("Combined Class Schedule and Office Hours\n")
         file.write("=" * 50 + "\n")
 
+        # Write class schedules
         for section in courses.values():
             for label, key in labels.items():
                 file.write(f"{label}: {section[key]}\n")
+
             file.write("-" * 30 + "\n")
 
+        # Write syllabus office hours
         if office_hours != "Unknown":
+            file.write("\nSyllabus Office Hours\n")
             file.write(f"Office Hours: {office_hours}\n")
+            file.write("-" * 30 + "\n")
+
+        # Write faculty office hours
+        file.write("\nFaculty Office Hours\n")
+        file.write("=" * 50 + "\n")
+        file.write(
+            "Note: Faculty office hours below are sample "
+            "demonstration data, not verified schedules.\n\n"
+        )
+
+        for person in faculty:
+            name = clean(person.get("Professor", ""))
+            days = clean(person.get("Office Days", ""))
+            hours = clean(person.get("Office Hours", ""))
+
+            if name == "Unknown":
+                continue
+
+            file.write(f"Professor: {name}\n")
+
+            if days != "Unknown":
+                file.write(f"Office Days: {days}\n")
+
+            if hours != "Unknown":
+                file.write(f"Office Hours: {hours}\n")
+            else:
+                file.write("Office Hours: Not provided\n")
+
+            file.write("-" * 30 + "\n")
 
 
 # --------------------------------------------------
@@ -232,11 +281,18 @@ def write_knowledge_base(sections, syllabus, faculty):
     path = FOLDER / "knowledge_base.pl"
 
     predicates = [
-        "course_section/2", "teaches/2", "teaches_section/2",
-        "course_title/2", "class_schedule/5", "meets_on/2",
-        "office_hours/3", "faculty_member/1",
-        "faculty_department/2", "faculty_email/2",
-        "faculty_office/2", "faculty_appointment/2"
+        "course_section/2",
+        "teaches/2",
+        "teaches_section/2",
+        "course_title/2",
+        "class_schedule/5",
+        "meets_on/2",
+        "office_hours/3",
+        "faculty_member/1",
+        "faculty_department/2",
+        "faculty_email/2",
+        "faculty_office/2",
+        "faculty_appointment/2"
     ]
 
     with path.open("w", encoding="utf-8") as file:
@@ -295,8 +351,9 @@ def write_knowledge_base(sections, syllabus, faculty):
                         f"{atom(syllabus['office_hours'])}).\n"
                     )
 
-        # Faculty CSV information
-        file.write("\n% Faculty CSV information\n\n")
+        # Faculty information from Excel
+        file.write("\n% Faculty information\n")
+        file.write("% Sample office hours are not verified.\n\n")
 
         fields = {
             "Department": "faculty_department",
@@ -316,6 +373,7 @@ def write_knowledge_base(sections, syllabus, faculty):
 
             for column, predicate in fields.items():
                 value = clean(person.get(column, ""))
+
                 if value != "Unknown":
                     file.write(f"{predicate}({prof}, {atom(value)}).\n")
 
@@ -330,7 +388,7 @@ def write_knowledge_base(sections, syllabus, faculty):
 
             file.write("\n")
 
-        # Rules used by the Prolog search program
+        # Prolog rules
         file.write("""
 % Prolog rules
 
@@ -362,7 +420,7 @@ professor_department(P, D) :- faculty_department(P, D).
 
 
 # --------------------------------------------------
-# Run the project
+# Main program
 # --------------------------------------------------
 
 def main():
@@ -385,7 +443,7 @@ def main():
 
     faculty = read_faculty()
 
-    write_combined(sections, syllabus["office_hours"])
+    write_combined(sections, syllabus["office_hours"], faculty)
     write_knowledge_base(sections, syllabus, faculty)
 
     print("Combined schedule file generated successfully!")

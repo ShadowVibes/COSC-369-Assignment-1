@@ -289,6 +289,14 @@ Days: TR
 Room: 114
 Instructor: Wilson, Marcella J.
 ------------------------------
+Course ID: CTEC 369
+Title: Software Engineering
+Begin: 09:30
+End: 10:45
+Days: TR
+Room: 108
+Instructor: Appolo Tankeh
+------------------------------
 Course ID: COSC 369
 Title: Software Engineering I
 Begin: 09:30
@@ -298,7 +306,90 @@ Room: CS 108
 Instructor: Dr. Appolo Tankeh
 ------------------------------
 
-OFFICE HOURS
+
+SYLLABUS OFFICE HOURS
 NOTE: Instructors are not to be interrupted during class times.
 
 Office Hours: Tue/Thursday: 10:45-1pm
+------------------------------
+
+
+FACULTY OFFICE HOURS
+Note: Faculty office hours below are sample demonstration data, not verified schedules.
+
+Professor: Adedoyin, Anthony
+Office Days: monday,wednesday
+Office Hours: 13:00-14:30
+------------------------------
+Professor: Agboli, P.
+Office Days: tuesday,thursday
+Office Hours: 11:00-12:30
+------------------------------
+Professor: Baptiste, R.
+Office Hours: Not provided
+------------------------------
+Professor: Bemley
+Office Days: friday
+Office Hours: 10:00-11:30
+------------------------------
+Professor: Bemley, J
+Office Days: monday,wednesday
+Office Hours: 13:00-14:30
+------------------------------
+Professor: Bemley, Jesse
+Office Hours: Not provided
+------------------------------
+Professor: Ruth Agada
+Office Days: wednesday
+Office Hours: 14:00-15:30
+------------------------------
+Professor: Bright, Marvin
+Office Days: friday
+Office Hours: 10:00-11:30
+------------------------------
+Professor: Carter, Adrian D.
+Office Days: monday,wednesday
+Office Hours: 13:00-14:30
+------------------------------
+Professor: Chery, Pierrot
+Office Days: tuesday,thursday
+Office Hours: 11:00-12:30
+------------------------------
+Professor: Deal, Shawn
+Office Days: wednesday
+Office Hours: 14:00-15:30
+------------------------------
+Professor: Dixon, Carl
+Office Days: friday
+Office Hours: 10:00-11:30
+------------------------------
+Professor: Dr. Stone, D. B.
+Office Hours: Not provided
+------------------------------
+Professor: Eugene Harris
+Office Days: tuesday,thursday
+Office Hours: 11:00-12:30
+------------------------------
+Professor: Eugene T. Harris
+Office Days: wednesday
+Office Hours: 14:00-15:30
+------------------------------
+Professor: Francis, Wilbert R.
+Office Days: friday
+Office Hours: 10:00-11:30
+------------------------------
+Professor: Henri E. Cooper
+Office Days: monday,wednesday
+Office Hours: 13:00-14:30
+------------------------------
+Professor: Staphord Bengesi
+Office Hours: Not provided
+------------------------------
+Professor: Lamar, Courtney
+Office Days: wednesday
+Office Hours: 14:00-15:30
+------------------------------
+Professor: Miller, Stephanie R.
+Office Days: friday
+Office Hours: 10:00-11:30
+------------------------------

@@ -1,5 +1,7 @@
+
 CC = gcc
 AR = ar
+PYTHON = ./.venv/bin/python
 CFLAGS = -Wall -Wextra
 
 TARGET = schedule_formatter.exe
@@ -20,13 +22,13 @@ $(TARGET): main.c formatter.h $(LIBRARY)
 	$(CC) $(CFLAGS) main.c $(LIBRARY) -o $(TARGET)
 
 update_schedule:
-	python main.py
+	$(PYTHON) main.py
 
 formatted_schedule.txt: $(TARGET) update_schedule
 	./$(TARGET)
 
-Final_Schedule.docx: formatted_schedule.txt generate_word.py
-	python generate_word.py
+Final_Schedule.docx: formatted_schedule.txt generate_word.py knowledge_base.pl
+	$(PYTHON) generate_word.py
 
 final: Final_Schedule.docx
 	@echo "Final schedule generated successfully."
@@ -34,4 +36,4 @@ final: Final_Schedule.docx
 run: final
 
 clean:
-	rm -f $(OBJECT) $(LIBRARY) $(TARGET) Combined_Schedule_Office_Hours.txt formatted_schedule.txt Final_Schedule.docx
+	rm -f $(OBJECT) $(LIBRARY) $(TARGET) Combined_Schedule_Office_Hours.txt formatted_schedule.txt Final_Schedule.docx knowledge_base.pl

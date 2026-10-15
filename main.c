@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include "formatter.h"
 
@@ -12,7 +13,7 @@ int main(void)
     {
         printf("Formatting failed.\n");
         return 1;
-    }gcc main.c libformatter.a -o schedule_formatter.exe
+    }
 
     printf("Output written to %s\n", output_file);
 

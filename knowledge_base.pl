@@ -460,6 +460,14 @@ class_schedule('CTEC 415.180', 'TR', '10:00', '12:50', '114').
 meets_on('CTEC 415.180', 'tuesday').
 meets_on('CTEC 415.180', 'thursday').
 
+course_section('CTEC 369.100', 'CTEC 369').
+teaches('Appolo Tankeh', 'CTEC 369').
+teaches_section('Appolo Tankeh', 'CTEC 369.100').
+course_title('CTEC 369', 'Software Engineering').
+class_schedule('CTEC 369.100', 'TR', '09:30', '10:45', '108').
+meets_on('CTEC 369.100', 'tuesday').
+meets_on('CTEC 369.100', 'thursday').
+
 course_section('COSC 369', 'COSC 369').
 teaches('Dr. Appolo Tankeh', 'COSC 369').
 teaches_section('Dr. Appolo Tankeh', 'COSC 369').
@@ -477,103 +485,141 @@ syllabus_office_hours('Tue/Thursday: 10:45-1pm').
 office_hours('Dr. Appolo Tankeh', 'tuesday', 'Tue/Thursday: 10:45-1pm').
 office_hours('Dr. Appolo Tankeh', 'thursday', 'Tue/Thursday: 10:45-1pm').
 
-% Faculty CSV information
+% Faculty information
+% Sample office hours are not verified.
 
 faculty_member('Adedoyin, Anthony').
 faculty_department('Adedoyin, Anthony', 'Computer Science & Technology').
 faculty_email('Adedoyin, Anthony', 'aadedoyin@bowiestate.edu').
+faculty_office('Adedoyin, Anthony', 'Sample CS Office 201').
+faculty_appointment('Adedoyin, Anthony', 'By appointment').
 office_hours('Adedoyin, Anthony', 'monday', '13:00-14:30').
 office_hours('Adedoyin, Anthony', 'wednesday', '13:00-14:30').
 
 faculty_member('Agboli, P.').
 faculty_department('Agboli, P.', 'Computer Science & Technology').
+faculty_office('Agboli, P.', 'Sample CS Office 202').
+faculty_appointment('Agboli, P.', 'By appointment').
 office_hours('Agboli, P.', 'tuesday', '11:00-12:30').
 office_hours('Agboli, P.', 'thursday', '11:00-12:30').
 
 faculty_member('Baptiste, R.').
 faculty_department('Baptiste, R.', 'Computer Science & Technology').
+faculty_office('Baptiste, R.', 'Sample CS Office 203').
+faculty_appointment('Baptiste, R.', 'By appointment').
 
 faculty_member('Bemley').
 faculty_department('Bemley', 'Computer Science & Technology').
+faculty_appointment('Bemley', 'By appointment').
 office_hours('Bemley', 'friday', '10:00-11:30').
 
 faculty_member('Bemley, J').
 faculty_department('Bemley, J', 'Computer Science & Technology').
+faculty_office('Bemley, J', 'Sample CS Office 205').
+faculty_appointment('Bemley, J', 'By appointment').
 office_hours('Bemley, J', 'monday', '13:00-14:30').
 office_hours('Bemley, J', 'wednesday', '13:00-14:30').
 
 faculty_member('Bemley, Jesse').
 faculty_department('Bemley, Jesse', 'Computer Science & Technology').
 faculty_email('Bemley, Jesse', 'jbemley@bowiestate.edu').
+faculty_office('Bemley, Jesse', 'Sample CS Office 206').
+faculty_appointment('Bemley, Jesse', 'By appointment').
 
 faculty_member('Ruth Agada').
 faculty_department('Ruth Agada', 'Computer Science & Technology').
 faculty_email('Ruth Agada', 'ragada@bowiestate.edu').
+faculty_office('Ruth Agada', 'Sample CS Office 207').
+faculty_appointment('Ruth Agada', 'By appointment').
 office_hours('Ruth Agada', 'wednesday', '14:00-15:30').
 
 faculty_member('Bright, Marvin').
 faculty_department('Bright, Marvin', 'Computer Science & Technology').
 faculty_email('Bright, Marvin', 'mbright@bowiestate.edu').
+faculty_office('Bright, Marvin', 'Sample CS Office 208').
+faculty_appointment('Bright, Marvin', 'By appointment').
 office_hours('Bright, Marvin', 'friday', '10:00-11:30').
 
 faculty_member('Carter, Adrian D.').
 faculty_department('Carter, Adrian D.', 'Computer Science & Technology').
 faculty_email('Carter, Adrian D.', 'acarter@bowiestate.edu').
+faculty_appointment('Carter, Adrian D.', 'By appointment').
 office_hours('Carter, Adrian D.', 'monday', '13:00-14:30').
 office_hours('Carter, Adrian D.', 'wednesday', '13:00-14:30').
 
 faculty_member('Chery, Pierrot').
 faculty_department('Chery, Pierrot', 'Computer Science & Technology').
 faculty_email('Chery, Pierrot', 'pchery@bowiestate.edu').
+faculty_office('Chery, Pierrot', 'Sample CS Office 210').
+faculty_appointment('Chery, Pierrot', 'By appointment').
 office_hours('Chery, Pierrot', 'tuesday', '11:00-12:30').
 office_hours('Chery, Pierrot', 'thursday', '11:00-12:30').
 
 faculty_member('Deal, Shawn').
 faculty_department('Deal, Shawn', 'Computer Science & Technology').
 faculty_email('Deal, Shawn', 'sdeal@bowiestate.edu').
+faculty_office('Deal, Shawn', 'Sample CS Office 211').
+faculty_appointment('Deal, Shawn', 'By appointment').
 office_hours('Deal, Shawn', 'wednesday', '14:00-15:30').
 
 faculty_member('Dixon, Carl').
 faculty_department('Dixon, Carl', 'Computer Science & Technology').
 faculty_email('Dixon, Carl', 'cdixon@bowiestate.edu').
+faculty_office('Dixon, Carl', 'Sample CS Office 212').
+faculty_appointment('Dixon, Carl', 'By appointment').
 office_hours('Dixon, Carl', 'friday', '10:00-11:30').
 
 faculty_member('Dr. Stone, D. B.').
 faculty_department('Dr. Stone, D. B.', 'Computer Science & Technology').
+faculty_office('Dr. Stone, D. B.', 'Sample CS Office 213').
+faculty_appointment('Dr. Stone, D. B.', 'By appointment').
 
 faculty_member('Eugene Harris').
 faculty_department('Eugene Harris', 'Computer Science & Technology').
 faculty_email('Eugene Harris', 'eharris@bowiestate.edu').
+faculty_office('Eugene Harris', 'Sample CS Office 214').
+faculty_appointment('Eugene Harris', 'By appointment').
 office_hours('Eugene Harris', 'tuesday', '11:00-12:30').
 office_hours('Eugene Harris', 'thursday', '11:00-12:30').
 
 faculty_member('Eugene T. Harris').
 faculty_department('Eugene T. Harris', 'Computer Science & Technology').
+faculty_office('Eugene T. Harris', 'Sample CS Office 215').
+faculty_appointment('Eugene T. Harris', 'By appointment').
 office_hours('Eugene T. Harris', 'wednesday', '14:00-15:30').
 
 faculty_member('Francis, Wilbert R.').
 faculty_department('Francis, Wilbert R.', 'Computer Science & Technology').
 faculty_email('Francis, Wilbert R.', 'wfrancis@bowiestate.edu').
+faculty_appointment('Francis, Wilbert R.', 'By appointment').
 office_hours('Francis, Wilbert R.', 'friday', '10:00-11:30').
 
 faculty_member('Henri E. Cooper').
 faculty_department('Henri E. Cooper', 'Computer Science & Technology').
 faculty_email('Henri E. Cooper', 'hcooper@bowiestate.edu').
+faculty_office('Henri E. Cooper', 'Sample CS Office 217').
+faculty_appointment('Henri E. Cooper', 'By appointment').
 office_hours('Henri E. Cooper', 'monday', '13:00-14:30').
 office_hours('Henri E. Cooper', 'wednesday', '13:00-14:30').
 
 faculty_member('Staphord Bengesi').
 faculty_department('Staphord Bengesi', 'Computer Science & Technology').
 faculty_email('Staphord Bengesi', 'sbengesi@bowiestate.edu').
+faculty_office('Staphord Bengesi', 'Sample CS Office 218').
+faculty_appointment('Staphord Bengesi', 'By appointment').
 
 faculty_member('Lamar, Courtney').
 faculty_department('Lamar, Courtney', 'Computer Science & Technology').
 faculty_email('Lamar, Courtney', 'clamar@bowiestate.edu').
+faculty_office('Lamar, Courtney', 'Sample CS Office 219').
+faculty_appointment('Lamar, Courtney', 'By appointment').
 office_hours('Lamar, Courtney', 'wednesday', '14:00-15:30').
 
 faculty_member('Miller, Stephanie R.').
 faculty_department('Miller, Stephanie R.', 'Computer Science & Technology').
 faculty_email('Miller, Stephanie R.', 'smiller@bowiestate.edu').
+faculty_office('Miller, Stephanie R.', 'Sample CS Office 220').
+faculty_appointment('Miller, Stephanie R.', 'By appointment').
 office_hours('Miller, Stephanie R.', 'friday', '10:00-11:30').
 
 

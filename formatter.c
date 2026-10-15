@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <string.h>
 #include "formatter.h"
@@ -22,7 +23,7 @@ int format_schedule(const char *input_file, const char *output_file)
     }
 
     char line[500];
-    int office_hours_started = 0;
+    int in_office_hours = 0;
 
     fprintf(output, "CLASS SCHEDULE\n");
     fprintf(output, "==================================================\n\n");
@@ -34,40 +35,24 @@ int format_schedule(const char *input_file, const char *output_file)
             continue;
         }
 
-        if (strstr(line, "==================================================") != NULL)
+        if (strncmp(line, "==================================================", 50) == 0)
         {
             continue;
         }
 
-        if (strncmp(line, "Office Hours:", 13) == 0)
+        if (strncmp(line, "Syllabus Office Hours", 21) == 0)
         {
-            if (!office_hours_started)
-            {
-                fprintf(output, "\nOFFICE HOURS\n");
-                fprintf(output,
-                        "NOTE: Instructors are not to be interrupted during class times.\n\n");
+            fprintf(output, "\nSYLLABUS OFFICE HOURS\n");
+            fprintf(output,
+                    "NOTE: Instructors are not to be interrupted during class times.\n\n");
+            in_office_hours = 1;
+            continue;
+        }
 
-                office_hours_started = 1;
-            }
-
-            char *hours = line + 13;
-
-            while (*hours == ' ' || *hours == '\t')
-            {
-                hours++;
-            }
-
-            if (strncmp(hours, "Office Hours:", 13) == 0)
-            {
-                hours += 13;
-
-                while (*hours == ' ' || *hours == '\t')
-                {
-                    hours++;
-                }
-            }
-
-            fprintf(output, "Office Hours: %s", hours);
+        if (strncmp(line, "Faculty Office Hours", 20) == 0)
+        {
+            fprintf(output, "\nFACULTY OFFICE HOURS\n");
+            in_office_hours = 1;
             continue;
         }
 
